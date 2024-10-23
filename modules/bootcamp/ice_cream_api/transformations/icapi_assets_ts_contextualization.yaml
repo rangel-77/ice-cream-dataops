@@ -1,0 +1,16 @@
+externalId: icapi_assets_ts_contextualization
+dataSetExternalId: 'ds_icapi'
+name: icapi_assets_ts_contextualization
+destination:
+  type: 'timeseries'
+ignoreNullFields: true
+isPublic: true
+conflictMode: update
+# Specify credentials separately like this:
+# You can also use different credentials for running the transformations than the credentials you use to deploy.
+authentication:
+  clientId: {{ IDP_CLIENT_ID }}
+  clientSecret: {{ IDP_CLIENT_SECRET }}
+  tokenUri: {{ IDP_TOKEN_URL }}
+  cdfProjectName: {{ CDF_PROJECT }}
+  scopes: {{ IDP_SCOPES }}
