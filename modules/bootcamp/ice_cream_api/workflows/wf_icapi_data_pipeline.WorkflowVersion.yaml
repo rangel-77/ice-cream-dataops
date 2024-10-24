@@ -1,63 +1,136 @@
 workflowExternalId: wf_icapi_data_pipeline
+
 version: '1'
+
 workflowDefinition:
+
   tasks:
+ 
   - externalId: icapi_assets_extractor
+
     type: function
+
     parameters:
+
       function:
+
         externalId: icapi_assets_extractor
-        concurrencyPolicy: waitForCurrent
-    retries: 3
-    timeout: 3600
-    onFailure: abortWorkflow
 
-  - externalId: create_assets_hierarchy
-    type: function
-    parameters:
-      function:capi_assets_extracto
-        externalId: create_assets_hierarchy
         concurrencyPolicy: waitForCurrent
-    retries: 3
-    timeout: 3600
-    onFailure: abortWorkflow
 
+    retries: 3
+
+    timeout: 3600
+
+    onFailure: abortWorkflow
+ 
   - externalId: icapi_timeseries_extractor
+
     type: function
+
     parameters:
+
       function:
+
         externalId: icapi_timeseries_extractor
-        concurrencyPolicy: waitForCurrent
-    retries: 3
-    timeout: 3600
-    onFailure: abortWorkflow
 
-  - externalId: icapi_datapoints_extractor
-    type: function
+        concurrencyPolicy: waitForCurrent
+
+    retries: 3
+
+    timeout: 3600
+
+    onFailure: abortWorkflow
+ 
+  - externalId: create_asset_hierarchy
+
+    type: transformation
+
     parameters:
-      function:
-        externalId: icapi_datapoints_extractorr
-        concurrencyPolicy: waitForCurrent
-    retries: 3
-    timeout: 3600
-    onFailure: abortWorkflow
 
+      transformation:
+
+        externalId: create_asset_hierarchy
+
+        concurrencyPolicy: waitForCurrent
+
+    dependsOn: 
+
+      - externalId: icapi_assets_extractor
+
+    retries: 3
+
+    timeout: 3600
+
+    onFailure: abortWorkflow
+ 
   - externalId: icapi_ts_assets_contextualization
-    type: function
-    parameters:
-      function:
-        externalId: icapi_ts_assets_contextualization
-        concurrencyPolicy: waitForCurrent
-    retries: 3
-    timeout: 3600
-    onFailure: abortWorkflow
 
-  - externalId: oee_timeseries
-    type: function
+    type: transformation
+
     parameters:
-      function:
-        externalId: oee_timeseries
+
+      transformation:
+
+        externalId: icapi_ts_assets_contextualization
+
         concurrencyPolicy: waitForCurrent
+
+    dependsOn: 
+
+      - externalId: icapi_timeseries_extractor
+
+      - externalId: create_asset_hierarchy
+
     retries: 3
+
     timeout: 3600
+
     onFailure: abortWorkflow
+ 
+  - externalId: icapi_datapoints_extractor
+
+    type: function
+
+    parameters:
+
+      function:
+
+        externalId: icapi_datapoints_extractor
+
+        concurrencyPolicy: waitForCurrent
+
+    dependsOn: 
+
+      - externalId: icapi_timeseries_extractor
+
+    retries: 3
+
+    timeout: 3600
+
+    onFailure: abortWorkflow
+ 
+  - externalId: oee_timeseries
+
+    type: function
+
+    parameters:
+
+      function:
+
+        externalId: oee_timeseries
+
+        concurrencyPolicy: waitForCurrent
+
+    dependsOn: 
+
+      - externalId: 'icapi_datapoints_extractor'
+
+      - externalId: 'icapi_ts_assets_contextualization'
+
+    retries: 3
+
+    timeout: 3600
+
+    onFailure: abortWorkflow
+ 
